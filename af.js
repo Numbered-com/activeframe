@@ -114,8 +114,8 @@ const mp4box = require('mp4box');
                 fps: videoTrack.nb_samples / (videoTrack.duration / videoTrack.timescale),
                 totalFrames: videoTrack.nb_samples,
                 frames: jsonbuf,
-                width: videoTrack.width,
-                height: videoTrack.height,
+                width: videoTrack.video.width,
+                height: videoTrack.video.height,
                 gop,
                 type,
                 description: descriptionBase64
