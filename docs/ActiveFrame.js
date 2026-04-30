@@ -193,8 +193,7 @@ window.ActiveFrame = class ActiveFrame {
             return;
         }
 
-
-        if (this.decoder.decodeQueueSize > 0) {
+        if (this.decoder.decodeQueueSize > 0 || this.decoder.state !== 'configured') {
             this.decoder.reset();
             this.decoder.configure(this.config);
         }
