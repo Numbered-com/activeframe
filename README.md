@@ -1,7 +1,7 @@
 # ActiveFrame 🖼️ (beta)
 
-![ActiveFrame sample](./docs/assets/sample.gif)
-![ActiveFrame sample2](./docs/assets/sample2.gif)
+![ActiveFrame sample](./public/sample.gif)
+![ActiveFrame sample2](./public/sample2.gif)
 
 Demo: https://activetheory.github.io/activeframe/  
 [More Context](https://x.com/luruke/status/2037511335257223626?s=20)
@@ -34,8 +34,16 @@ The file packs a **JSON manifest** at the front followed by **raw encoded sample
 
 ## Generating an `.af` file
 
+No clone required:
+
 ```bash
-node af.js <input video> <output.af> [maxWidth] [h264|h265] [gop] [crf] [fps]
+bunx @numbered/activeframe-cli <input video> <output.af> [maxWidth] [h264|h265] [gop] [crf] [fps]
+```
+
+Or from a clone of this repo:
+
+```bash
+node packages/cli/af.js <input video> <output.af> [maxWidth] [h264|h265] [gop] [crf] [fps]
 ```
 
 | Arg | Default | Notes |

@@ -1,35 +1,31 @@
 {
-  "name": "activeframe",
-  "version": "0.0.1",
+  "name": "activeframe-monorepo",
+  "version": "0.0.0",
+  "private": true,
   "description": "Custom .af video format for WebCodecs: frame-accurate playback without a video tag or third-party decoders.",
   "license": "MIT",
   "author": "luruke <lurukee@gmail.com>",
-  "type": "commonjs",
-  "main": "af.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/activetheory/activeframe"
+    "url": "git+https://github.com/Numbered-com/activeframe"
   },
-  "homepage": "https://github.com/activetheory/activeframe",
+  "homepage": "https://github.com/Numbered-com/activeframe",
   "bugs": {
-    "url": "https://github.com/activetheory/activeframe/issues"
+    "url": "https://github.com/Numbered-com/activeframe/issues"
   },
-  "keywords": [
-    "video",
-    "webcodecs",
-    "decoder",
-    "activeframe",
-    "active theory"
-  ],
-  "scripts": {
-    "demo": "portless run npx --yes serve@6 docs",
-    "generate": "cd samples && ./run.sh"
-  },
-  "dependencies": {
-    "ffmpeg-static": "^5.3.0",
-    "mp4box": "^2.3.0"
-  },
+  "workspaces": ["packages/*"],
   "devDependencies": {
-    "portless": "^0.12.0"
+    "@types/dom-webcodecs": "^0.1.18",
+    "@types/node": "^25.6.0",
+    "typescript": "^6.0.3"
+  },
+  "scripts": {
+    "dev": "bun --filter '@numbered/activeframe' dev",
+    "dev:react": "bun --filter '@numbered/activeframe-react' dev",
+    "dev:vue": "bun --filter '@numbered/activeframe-vue' dev",
+    "dev:alpine": "bun --filter '@numbered/activeframe-alpine' dev",
+    "build": "bun --filter '@numbered/activeframe*' build",
+    "typecheck": "bun --filter '@numbered/activeframe*' typecheck",
+    "generate": "cd samples && ./run.sh"
   }
 }

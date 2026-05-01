@@ -53,12 +53,13 @@
   </style>
 </head>
 <body>
-  <script src="ActiveFrame.js"></script>
   <canvas id="canvas"></canvas>
   <h1 id="loading">Loading...</h1>
   <div id="frame"></div>
-  
-  <script>
+
+  <script type="module">
+    import ActiveFrame from './ActiveFrame.js';
+
     (async () => {
       if (history.scrollRestoration) {
         history.scrollRestoration = 'manual';
