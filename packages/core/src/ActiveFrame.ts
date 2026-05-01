@@ -243,6 +243,8 @@ export default class ActiveFrame {
   private _loading: Deferred<void>;
   private _watermarkListener: WatermarkListener | null = null;
   private _pendingFrame: number | null = null;
+  private _lastFrame: VideoFrame | null = null;
+  private _destroyed = false;
 
   constructor(file: string, {
     process = () => {},
@@ -338,6 +340,7 @@ export default class ActiveFrame {
 
     for (const candidate of candidates) {
       const support = await VideoDecoder.isConfigSupported(candidate);
+      if (this._destroyed) return;
       if (support.supported) {
         this.config = candidate;
         break;
@@ -348,6 +351,8 @@ export default class ActiveFrame {
       throw new Error('Decoder not supported');
     }
 
+    if (this._destroyed) return;
+
     this.decoder = new VideoDecoder({
       output: this.outputFrame.bind(this),
       error: (e) => {
@@ -356,7 +361,6 @@ export default class ActiveFrame {
         console.error('Decoder error:', e);
       },
     });
-
     this.decoder.configure(this.config);
   }
 
@@ -376,12 +380,24 @@ export default class ActiveFrame {
     this.frame = timestampToFrameId;
 
     if (this.process) {
+      this._lastFrame?.close();
+      this._lastFrame = frame.clone();
       await this.process(frame);
     }
 
     this.frameProcessed = timestampToFrameId;
 
     frame.close();
+  }
+
+  async redraw(): Promise<void> {
+    if (!this.enabled || !this.process || !this._lastFrame) return;
+    const clone = this._lastFrame.clone();
+    try {
+      await this.process(clone);
+    } finally {
+      clone.close();
+    }
   }
 
   setFrame(desideredFrame: number): void {
@@ -393,6 +409,11 @@ export default class ActiveFrame {
     const maxFrame = Math.max(0, this.manifest.totalFrames - 1);
     desideredFrame = Math.min(Math.max(desideredFrame, 0), maxFrame);
     this.desideredFrame = desideredFrame;
+
+    if (desideredFrame === this.frame || desideredFrame === this._pendingFrame) {
+      this.waiter = null;
+      return;
+    }
 
     const frameMeta = this.manifest.frames[this.desideredFrame];
 
@@ -414,9 +435,6 @@ export default class ActiveFrame {
       return;
     }
     this.waiter = null;
-
-    if (this.desideredFrame === this.frame) return;
-    if (this.desideredFrame === this._pendingFrame) return;
 
     this._pendingFrame = desideredFrame;
 
@@ -493,6 +511,7 @@ export default class ActiveFrame {
   }
 
   destroy(): void {
+    this._destroyed = true;
     if (this.handle) {
       if (this._watermarkListener) {
         this.handle.listeners.delete(this._watermarkListener);
@@ -512,6 +531,8 @@ export default class ActiveFrame {
     this.frameProcessed = null;
     this.waiter = null;
     this.enabled = false;
+    this._lastFrame?.close();
+    this._lastFrame = null;
     this.framesByTimestamp.clear();
   }
 }

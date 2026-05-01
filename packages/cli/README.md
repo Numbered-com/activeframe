@@ -1,6 +1,8 @@
 # @numbered/activeframe-cli
 
-Transcode any video into the `.af` format consumed by [`@numbered/activeframe`](https://www.npmjs.com/package/@numbered/activeframe).
+Transcode any video into the `.af` format consumed by [`@numbered/activeframe`](../core/README.md).
+
+Part of the [ActiveFrame project](../../README.md).
 
 No install required:
 

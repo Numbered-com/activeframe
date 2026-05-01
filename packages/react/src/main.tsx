@@ -29,8 +29,6 @@ function App() {
       ref={ref}
       src={src}
       fit="cover"
-      width={window.innerWidth}
-      height={window.innerHeight}
       onReady={() => ref.current?.setFrame(0)}
     />
   );

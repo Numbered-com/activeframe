@@ -1,7 +1,7 @@
 import {
-  ActiveFrame as ActiveFrameCore,
-  drawFrame,
+  attachCanvas,
   type ActiveFrameOptions,
+  type AttachedCanvas,
   type FrameFit,
 } from '@numbered/activeframe';
 import type { Alpine } from 'alpinejs';
@@ -13,38 +13,39 @@ export interface ActiveFrameAlpineOptions extends Omit<ActiveFrameOptions, 'proc
 
 export default function activeFramePlugin(Alpine: Alpine) {
   Alpine.data('activeframe', (options: ActiveFrameAlpineOptions) => ({
-    instance: null as ActiveFrameCore | null,
+    attached: null as AttachedCanvas | null,
 
     init() {
       const canvas = (this.$refs.canvas ?? this.$el) as HTMLCanvasElement;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return;
 
-      const fit = options.fit ?? 'cover';
-      this.instance = new ActiveFrameCore(options.src, {
+      this.attached = attachCanvas(canvas, options.src, {
         hardwareAcceleration: options.hardwareAcceleration ?? 'prefer-hardware',
-        process: (frame) => drawFrame(frame, ctx, fit),
+        fit: options.fit ?? 'cover',
       });
 
-      this.instance.loading.then(() => {
-        this.instance?.setFrame(0);
-        this.$dispatch('ready', { manifest: this.instance?.manifest });
+      this.attached.loading.then(() => {
+        this.attached?.setFrame(0);
+        this.$dispatch('ready', { manifest: this.attached?.getManifest() });
       }).catch((err: unknown) => {
         this.$dispatch('error', { error: err });
       });
     },
 
     destroy() {
-      this.instance?.destroy();
-      this.instance = null;
+      this.attached?.destroy();
+      this.attached = null;
     },
 
     setFrame(n: number) {
-      this.instance?.setFrame(n);
+      this.attached?.setFrame(n);
+    },
+
+    setFit(fit: FrameFit) {
+      this.attached?.setFit(fit);
     },
 
     getCurrentFrame(): number | null {
-      return this.instance?.frame ?? null;
+      return this.attached?.getCurrentFrame() ?? null;
     },
   }));
 }

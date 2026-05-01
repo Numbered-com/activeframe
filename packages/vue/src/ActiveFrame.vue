@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import {
-  ActiveFrame as ActiveFrameCore,
-  drawFrame,
+  attachCanvas,
   type ActiveFrameManifest,
+  type AttachedCanvas,
   type FrameFit,
 } from '@numbered/activeframe';
 
@@ -22,32 +22,44 @@ const emit = defineEmits<{
 }>();
 
 const canvas = ref<HTMLCanvasElement | null>(null);
-let instance: ActiveFrameCore | null = null;
+let attached: AttachedCanvas | null = null;
 
-onMounted(() => {
+function setup() {
   if (!canvas.value) return;
-  const ctx = canvas.value.getContext('2d');
-  if (!ctx) return;
+  attached?.destroy();
 
-  instance = new ActiveFrameCore(props.src, {
+  const current = attachCanvas(canvas.value, props.src, {
     hardwareAcceleration: props.hardwareAcceleration,
-    process: (frame) => drawFrame(frame, ctx, props.fit),
+    fit: props.fit,
   });
+  attached = current;
 
-  instance.loading
-    .then(() => emit('ready', instance!.manifest!))
-    .catch((err: unknown) => emit('error', err instanceof Error ? err : new Error(String(err))));
-});
+  current.loading
+    .then(() => {
+      if (attached !== current) return;
+      emit('ready', current.getManifest()!);
+    })
+    .catch((err: unknown) => {
+      if (attached !== current) return;
+      emit('error', err instanceof Error ? err : new Error(String(err)));
+    });
+}
+
+onMounted(setup);
+
+watch([() => props.src, () => props.hardwareAcceleration], setup);
+
+watch(() => props.fit, (next) => attached?.setFit(next));
 
 onBeforeUnmount(() => {
-  instance?.destroy();
-  instance = null;
+  attached?.destroy();
+  attached = null;
 });
 
 defineExpose({
-  setFrame: (n: number) => instance?.setFrame(n),
-  getCurrentFrame: () => instance?.frame ?? null,
-  getManifest: () => instance?.manifest ?? null,
+  setFrame: (n: number) => attached?.setFrame(n),
+  getCurrentFrame: () => attached?.getCurrentFrame() ?? null,
+  getManifest: () => attached?.getManifest() ?? null,
 });
 </script>
 

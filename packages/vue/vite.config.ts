@@ -19,7 +19,7 @@ export default defineConfig(({ command }): UserConfig => {
   return {
     root: packageRoot,
     publicDir: false,
-    plugins: [vue(), dts({ rollupTypes: true })],
+    plugins: [vue(), dts({ bundleTypes: true })],
     build: {
       lib: {
         entry: resolve(packageRoot, 'src/index.ts'),

@@ -19,7 +19,7 @@ export default defineConfig(({ command }): UserConfig => {
   return {
     root: packageRoot,
     publicDir: false,
-    plugins: [react(), dts({ rollupTypes: true })],
+    plugins: [react(), dts({ bundleTypes: true })],
     build: {
       lib: {
         entry: resolve(packageRoot, 'src/index.ts'),
