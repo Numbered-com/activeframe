@@ -29,7 +29,6 @@ export default defineConfig(({ command }): UserConfig => {
       outDir: 'dist',
       emptyOutDir: true,
       sourcemap: true,
-      minify: false,
       target: 'es2022',
       rollupOptions: {
         external: ['react', 'react-dom', 'react/jsx-runtime', 'react/jsx-dev-runtime', '@numbered/activeframe'],

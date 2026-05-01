@@ -45,7 +45,6 @@ export default defineConfig(({ command }): UserConfig => {
       outDir: 'dist',
       emptyOutDir: true,
       sourcemap: true,
-      minify: false,
       target: 'es2022',
     },
   };
