@@ -30,6 +30,7 @@
   "scripts": {
     "dev": "portless run vite",
     "build": "vite build",
+    "build:demo": "vite build --mode demo",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
