@@ -1,0 +1,43 @@
+{
+  "name": "@numbered/activeframe",
+  "version": "0.1.0",
+  "description": "Custom .af video format for WebCodecs: frame-accurate playback without a video tag or third-party decoders.",
+  "license": "MIT",
+  "author": "luruke <lurukee@gmail.com>",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Numbered-com/activeframe"
+  },
+  "homepage": "https://github.com/Numbered-com/activeframe",
+  "bugs": {
+    "url": "https://github.com/Numbered-com/activeframe/issues"
+  },
+  "keywords": ["video", "webcodecs", "decoder", "activeframe", "frame-accurate"],
+  "files": ["dist"],
+  "main": "dist/activeframe.js",
+  "module": "dist/activeframe.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/activeframe.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "dev": "portless run vite",
+    "build": "vite build",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/dom-webcodecs": "^0.1.18",
+    "@types/node": "^25.6.0",
+    "portless": "^0.12.0",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.10",
+    "vite-plugin-dts": "^5.0.0"
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "name": "@numbered/activeframe-vue",
+  "version": "0.1.0",
+  "description": "Vue 3 wrapper for @numbered/activeframe — frame-accurate WebCodecs video.",
+  "license": "MIT",
+  "author": "luruke <lurukee@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Numbered-com/activeframe"
+  },
+  "homepage": "https://github.com/Numbered-com/activeframe",
+  "bugs": {
+    "url": "https://github.com/Numbered-com/activeframe/issues"
+  },
+  "keywords": ["video", "webcodecs", "activeframe", "vue", "frame-accurate"],
+  "type": "module",
+  "files": ["dist"],
+  "main": "dist/activeframe-vue.js",
+  "module": "dist/activeframe-vue.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/activeframe-vue.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "dev": "portless run vite",
+    "build": "vite build",
+    "typecheck": "vue-tsc --noEmit"
+  },
+  "peerDependencies": {
+    "vue": "^3.5.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.6",
+    "portless": "^0.12.0",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.10",
+    "vite-plugin-dts": "^5.0.0",
+    "vue": "^3.5.33",
+    "vue-tsc": "^3.2.7"
+  },
+  "dependencies": {
+    "@numbered/activeframe": "workspace:*"
+  }
+}

@@ -53,33 +53,22 @@
   </style>
 </head>
 <body>
-  <script src="ActiveFrame.js"></script>
   <canvas id="canvas"></canvas>
   <h1 id="loading">Loading...</h1>
   <div id="frame"></div>
-  
-  <script>
+
+  <script type="module">
+    import { attachCanvas } from './ActiveFrame.js';
+
     (async () => {
       if (history.scrollRestoration) {
         history.scrollRestoration = 'manual';
       }
 
       window.scrollTo(0, 0);
-      
+
       const canvas = document.getElementById('canvas');
-      const ctx = canvas.getContext('2d');
-
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-      // function resize() {
-      //   canvas.width = window.innerWidth;
-      //   canvas.height = window.innerHeight;
-      //   // ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-      // }
-
-      // resize();
-      // window.addEventListener('resize', resize);
+      const frameLabel = document.getElementById('frame');
 
       function checkSupport(codec) {
         return VideoDecoder.isConfigSupported({
@@ -89,18 +78,6 @@
 
       function showUnsupported() {
         document.getElementById('loading').innerHTML = 'Unsupported';
-      }
-  
-      function drawImageCover(image, destW, destH) {
-        const sw = image.displayWidth ?? image.codedWidth;
-        const sh = image.displayHeight ?? image.codedHeight;
-        const scale = Math.max(destW / sw, destH / sh);
-        const tw = sw * scale;
-        const th = sh * scale;
-        const ox = (destW - tw) / 2;
-        const oy = (destH - th) / 2;
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
-        ctx.drawImage(image, 0, 0, sw, sh, ox, oy, tw, th);
       }
 
       let portrait = window.innerWidth < window.innerHeight;
@@ -137,25 +114,27 @@
 
       let file = `assets/${portrait ? 'p_' : ''}meridian_${codec}.af`;
 
-      const activeFrame = new ActiveFrame(file, {
+      const player = attachCanvas(canvas, file, {
         hardwareAcceleration,
-        process: (frame) => {
-          drawImageCover(frame, canvas.width, canvas.height);
-          document.getElementById('frame').innerHTML = `Frame: ${activeFrame.frame}`;
-        }
+        fit: 'cover',
+        onDraw: () => {
+          frameLabel.innerHTML = `Frame: ${player.getCurrentFrame()}`;
+        },
       });
 
-      await activeFrame.loading;
+      await player.loading;
       document.getElementById('loading').style.display = 'none';
-      activeFrame.setFrame(0);
+      player.setFrame(0);
+
+      const totalFrames = player.getManifest().totalFrames;
 
       window.addEventListener('scroll', function() {
         const scrollPosition = window.scrollY;
         const totalHeight = document.body.scrollHeight;
         const viewportHeight = window.innerHeight;
         const progress = scrollPosition / (totalHeight - viewportHeight);
-        const frame = Math.round(progress * (activeFrame.manifest.totalFrames - 1));
-        activeFrame.setFrame(frame);
+        const frame = Math.round(progress * (totalFrames - 1));
+        player.setFrame(frame);
       });
     })();
   </script>

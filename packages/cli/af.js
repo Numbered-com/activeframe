@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 const path = require('path');
 const ffmpegPath = require('ffmpeg-static');
 const { spawnSync } = require('child_process');

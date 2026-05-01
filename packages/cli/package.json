@@ -1,0 +1,26 @@
+{
+  "name": "@numbered/activeframe-cli",
+  "version": "0.1.0",
+  "description": "CLI to transcode video into the .af format for @numbered/activeframe.",
+  "license": "MIT",
+  "author": "luruke <lurukee@gmail.com>",
+  "type": "commonjs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Numbered-com/activeframe"
+  },
+  "homepage": "https://github.com/Numbered-com/activeframe",
+  "bugs": {
+    "url": "https://github.com/Numbered-com/activeframe/issues"
+  },
+  "keywords": ["video", "webcodecs", "activeframe", "transcoder", "ffmpeg"],
+  "files": ["af.js", "README.md"],
+  "bin": "./af.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "ffmpeg-static": "^5.3.0",
+    "mp4box": "^2.3.0"
+  }
+}
