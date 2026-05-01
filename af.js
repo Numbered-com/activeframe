@@ -13,9 +13,10 @@ const mp4box = require('mp4box');
     const type = process.argv[5] || 'h264'; // h264, h265
     const gop = process.argv[6] || 5;
     const crf = process.argv[7] || 28;
+    const fps = process.argv[8]; // optional; preserves input fps if omitted
 
     if (!inputFile || !outputFile) {
-        console.error('Usage: node af.js <input file> <output file> <max width> <type> <gop> <crf>');
+        console.error('Usage: node af.js <input file> <output file> <max width> <type> <gop> <crf> <fps>');
         process.exit(1);
     }
 
@@ -32,7 +33,7 @@ const mp4box = require('mp4box');
         tag = 'hvc1';
     }
 
-    const ffmpeg = spawnSync(ffmpegPath, [
+    const ffmpegArgs = [
         '-i', inputFile,
         '-c:v', cv,
         '-tag:v', tag,
@@ -49,10 +50,16 @@ const mp4box = require('mp4box');
         '-g', gop,
         '-bf', '0',
         '-movflags', '+faststart',
-        '-an',
-        '-y',
-        tmpMp4
-    ]);
+        '-an'
+    ];
+
+    if (fps) {
+        ffmpegArgs.push('-r', fps);
+    }
+
+    ffmpegArgs.push('-y', tmpMp4);
+
+    const ffmpeg = spawnSync(ffmpegPath, ffmpegArgs);
 
     if (ffmpeg.status !== 0) {
         console.error('Failed to generate video');
@@ -121,14 +128,13 @@ const mp4box = require('mp4box');
                 description: descriptionBase64
             };
 
-            // add description to the end of the data buffer
-            databuf = Buffer.concat([databuf, Buffer.from(JSON.stringify(manifest))]);
+            const manifestBuf = Buffer.from(JSON.stringify(manifest));
+            const lenBuf = Buffer.alloc(4);
+            lenBuf.writeUInt32LE(manifestBuf.length, 0);
 
-            const footer = Buffer.alloc(4);
-            footer.writeUInt32LE(offset, 0);
-            databuf = Buffer.concat([databuf, footer]);
+            const out = Buffer.concat([lenBuf, manifestBuf, databuf]);
 
-            fs.writeFileSync(outputFile, databuf);
+            fs.writeFileSync(outputFile, out);
 
             console.log('✅ Video generated successfully!');
         };
